@@ -1,0 +1,19 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "bs4Qet93Z8f2eB8MVdM2hXXTyso=",
+			"path": "go.uber.org/zap",
+			"revision": "badef736563f8135e0add3232b06f58656da03c8",
+			"revisionTime": "2019-03-27T19:54:48Z"
+		},
+		{
+			"checksumSHA1": "CjaGHXv/EdNvsjiNv0yB3ZLPHjI=",
+			"path": "go.uber.org/zap/zapcore",
+			"revision": "badef736563f8135e0add3232b06f58656da03c8",
+			"revisionTime": "2019-03-27T19:54:48Z"
+		}
+	],
+	"rootPath": "github.com/joychenjh/logcontext"
+}
