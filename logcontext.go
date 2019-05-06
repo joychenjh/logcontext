@@ -65,6 +65,13 @@ type LogContext interface {
 	Warnw(msg string, f ...zap.Field)
 	Warnwc(ctx context.Context, msg string, f ...zap.Field)
 
+	Error(v ...interface{})
+	Errorf(format string, v ...interface{})
+	Errorc(ctx context.Context, v ...interface{})
+	Errorcf(ctx context.Context, format string, v ...interface{})
+	Errorw(msg string, f ...zap.Field)
+	Errorwc(ctx context.Context, msg string, f ...zap.Field)
+
 	Fatal(v ...interface{})
 	Fatalf(format string, v ...interface{})
 	Fatalc(ctx context.Context, v ...interface{})

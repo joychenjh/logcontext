@@ -118,6 +118,31 @@ func (log *zapLog) Warnwc(ctx context.Context, msg string, f ...zap.Field) {
 	log.slogFieldData(ctx, zapcore.WarnLevel, msg, f...)
 }
 
+//Error
+func (log *zapLog) Error(v ...interface{}) {
+	log.logMsgData(nil, zapcore.ErrorLevel, "", v...)
+}
+
+func (log *zapLog) Errorf(format string, v ...interface{}) {
+	log.logMsgData(nil, zapcore.ErrorLevel, format, v...)
+}
+
+func (log *zapLog) Errorc(ctx context.Context, v ...interface{}) {
+	log.logMsgData(ctx, zapcore.ErrorLevel, "", v...)
+}
+
+func (log *zapLog) Errorcf(ctx context.Context, format string, v ...interface{}) {
+	log.logMsgData(ctx, zapcore.ErrorLevel, format, v...)
+}
+
+func (log *zapLog) Errorw(msg string, f ...zap.Field) {
+	log.slogFieldData(nil, zapcore.ErrorLevel, "", f...)
+}
+
+func (log *zapLog) Errorwc(ctx context.Context, msg string, f ...zap.Field) {
+	log.slogFieldData(ctx, zapcore.ErrorLevel, msg, f...)
+}
+
 //Fatal
 func (log *zapLog) Fatal(v ...interface{}) {
 	log.logMsgData(nil, zapcore.FatalLevel, "", v...)
