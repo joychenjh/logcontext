@@ -9,19 +9,26 @@ import (
 )
 
 type zapLog struct {
-	zlog      *zap.Logger
-	atom      zap.AtomicLevel
-	ctxLog    ContextLog
-	calldepth int
+	zlog         *zap.Logger
+	atom         zap.AtomicLevel
+	ctxLog       ContextLog
+	calldepth    int
+	jsonencoding bool
 }
 
-func NewZapLog(zlog *zap.Logger, atom zap.AtomicLevel) (zl LogContext) {
+func NewZapLog(zlog *zap.Logger, atom zap.AtomicLevel, encoding string) (zl LogContext) {
+
+	_jsonencoding := false
+	if encoding == "json" {
+		_jsonencoding = true
+	}
 
 	_zt := zlog.WithOptions(zap.AddCallerSkip(3))
 	zl = &zapLog{
-		zlog:   _zt,
-		atom:   atom,
-		ctxLog: NewNilContext(),
+		zlog:         _zt,
+		atom:         atom,
+		ctxLog:       NewNilContext(),
+		jsonencoding: _jsonencoding,
 	}
 
 	return zl
@@ -41,6 +48,12 @@ func (log *zapLog) SetCallerSkip(calldepth int) LogContext {
 func (log *zapLog) SetLogLevel(level LogLevel) LogContext {
 	log.atom.SetLevel(zapcore.Level(level))
 	return log
+}
+
+func (log *zapLog) Sync() {
+	if log.zlog != nil {
+		log.zlog.Sync()
+	}
 }
 
 //Debug
@@ -229,13 +242,22 @@ func (log *zapLog) logMsgData(ctx context.Context, level zapcore.Level, format s
 	case zapcore.FatalLevel:
 		logfunc = log.zlog.Fatal
 	}
-
 	if ctx != nil {
-		if len(format) == 0 {
-			logfunc(fmt.Sprint(args...), log.ctxLog.ContextInfo(ctx)...)
+
+		if log.jsonencoding {
+			if len(format) == 0 {
+				logfunc(fmt.Sprint(args...), log.ctxLog.ContextInfo(ctx)...)
+			} else {
+				logfunc(fmt.Sprintf(format, args...), log.ctxLog.ContextInfo(ctx)...)
+			}
 		} else {
-			logfunc(fmt.Sprintf(format, args...), log.ctxLog.ContextInfo(ctx)...)
+			if len(format) == 0 {
+				logfunc(log.ctxLog.ContextStr(ctx) + " " + fmt.Sprint(args...))
+			} else {
+				logfunc(log.ctxLog.ContextStr(ctx) + " " + fmt.Sprintf(format, args...))
+			}
 		}
+
 	} else {
 		if len(format) == 0 {
 			logfunc(fmt.Sprint(args...))

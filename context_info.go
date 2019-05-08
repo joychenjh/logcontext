@@ -13,7 +13,7 @@ var _traceSTContextKey = "_traceSTContexKey"
 
 type ContextLog interface {
 	ContextInfo(ctx context.Context) []zap.Field
-	Key() string
+	ContextStr(ctx context.Context) string
 }
 
 type nilContext struct {
@@ -27,7 +27,7 @@ func (nilContext) ContextInfo(ctx context.Context) []zap.Field {
 	return []zap.Field{}
 }
 
-func (nilContext) Key() string {
+func (nilContext) ContextStr(ctx context.Context) string {
 	return ""
 }
 
@@ -47,6 +47,11 @@ func (tContext *TraceContext) ContextInfo(ctx context.Context) []zap.Field {
 	return []zap.Field{zap.String("_traceid", fmt.Sprint(ctx.Value(_traceIDContextKey))), zap.String("_ut", _ustr)}
 }
 
-func (tContext *TraceContext) Key() string {
-	return tContext.KInfo
+func (tContext *TraceContext) ContextStr(ctx context.Context) string {
+	_ustr := ""
+	if _v, ok := ctx.Value(_traceSTContextKey).(time.Time); ok {
+		_ustr = time.Since(_v).String()
+	}
+
+	return fmt.Sprintf("_traceid:%s,_ut:%s", fmt.Sprint(ctx.Value(_traceIDContextKey)), _ustr)
 }

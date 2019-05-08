@@ -40,6 +40,8 @@ type LogContext interface {
 	SetLogLevel(level LogLevel) LogContext
 	SetCallerSkip(calldepth int) LogContext
 
+	Sync()
+
 	Debug(v ...interface{})
 	Debugf(format string, v ...interface{})
 	Debugc(ctx context.Context, v ...interface{})

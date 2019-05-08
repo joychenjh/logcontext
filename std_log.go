@@ -53,6 +53,9 @@ func (l *stdLogger) SetLogLevel(level LogLevel) LogContext {
 	return l
 }
 
+func (l *stdLogger) Sync() {
+}
+
 //Debug
 
 func (l *stdLogger) Debug(v ...interface{}) {
@@ -244,12 +247,7 @@ func (log *stdLogger) logMsgData(ctx context.Context, level LogLevel, format str
 	}
 	_msg += "\t"
 	if ctx != nil {
-		_buf, err := log.fencode.EncodeEntry(zapcore.Entry{}, log.ctxOpt.ContextInfo(ctx))
-		if err == nil {
-			_buf.TrimNewline()
-			_msg += _buf.String() + " "
-			_buf.Free()
-		}
+		_msg += log.ctxOpt.ContextStr(ctx) + " "
 
 		if len(format) == 0 {
 			_msg += fmt.Sprint(args...)
